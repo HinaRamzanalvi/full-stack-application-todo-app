@@ -11,10 +11,11 @@ app = FastAPI(title="Hackathon II Todo API", version="1.0.0")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=[
+        "https://hackathon-todo-frontend-hs084165q-hina-alvi.vercel.app/"
+    ],  # In production, replace with specific origins
+   
+ 
 )
 
 # Include API routes
