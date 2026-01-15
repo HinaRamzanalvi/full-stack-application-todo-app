@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from models.user import User, UserCreate
 from database.session import get_db_session
-from sqlmodel import Session
+from sqlmodel import Session, select
 from api.routes.auth import get_password_hash, verify_password
 
 def create_test_user():
@@ -21,7 +21,7 @@ def create_test_user():
 
     try:
         # Check if user already exists
-        existing_user = db.query(User).filter(User.email == email).first()
+        existing_user = db.exec(select(User).where(User.email == email)).first()
         if existing_user:
             print(f"User with email {email} already exists!")
             return
