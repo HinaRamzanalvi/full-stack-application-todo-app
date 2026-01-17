@@ -1,45 +1,43 @@
-from sqlmodel import create_engine, Session
-from typing import Generator
-from .config import settings
-from contextlib import contextmanager
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
-# Create the database engine
-engine = create_engine( 
-    settings.database_url,
-    echo=settings.db_echo_sql,
-    pool_pre_ping=True,
-    pool_size=settings.db_pool_size,
-    max_overflow=settings.db_max_overflow,
-)
+# --- Configuration ---
+# Use Pydantic's BaseSettings to read from environment variables.
+# This provides strong typing and validation for your settings.
+class DBSettings(BaseSettings):
+    # The `Field` with `...` makes this a required environment variable.
+    # The application will fail to start if this is not set in the environment.
+    database_url: str = Field(..., alias='DATABASE_URL')
 
-def get_session() -> Generator[Session, None, None]:
-    with Session(engine) as session:
-        yield session
+    class Config:
+        # Load from a .env file for local development (optional)
+        env_file = ".env"
+        # Allow reading variables from the environment
+        extra = "ignore"
 
+# Instantiate settings
+db_settings = DBSettings()
 
-# Alias for compatibility
-get_db_session = get_session
+# --- Database Engine & Session ---
+# The engine is the starting point for any SQLAlchemy application.
+# It's configured once for the entire application.
+# `pool_pre_ping=True` checks connection validity before use, preventing errors
+# with disconnected sessions.
+engine = create_engine(db_settings.database_url, pool_pre_ping=True)
 
-@contextmanager
-def get_session_context():
-    with Session(engine) as session:
-        try:
-            yield session
-            session.commit()
-        except Exception:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+# SessionLocal is a factory for creating new database sessions.
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-def create_tables():
-    """Create all tables in the database - automatic table creation for hackathon"""
-    from models.task import Task
-    from models.user import User
-    from sqlmodel import SQLModel
-
-    SQLModel.metadata.create_all(engine)
-
-def init_db():
-    """Initialize the database - for hackathon automatic setup"""
-    create_tables()
+# --- Dependency for FastAPI ---
+# This function will be used as a dependency in your API routes.
+# It ensures that a database session is created for each request and
+# is properly closed afterward, even if an error occurs.
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
