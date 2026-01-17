@@ -4,7 +4,7 @@ from .config import settings
 from contextlib import contextmanager
 
 # Create the database engine
-engine = create_engine(
+engine = create_engine( 
     settings.database_url,
     echo=settings.db_echo_sql,
     pool_pre_ping=True,
