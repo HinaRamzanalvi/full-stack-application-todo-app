@@ -1,3 +1,16 @@
+import subprocess
+import sys
+
+try:
+    import psycopg2
+except ImportError:
+    print("psycopg2 not found, attempting to install...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "psycopg2-binary"])
+    print("psycopg2 installed, attempting to re-import...")
+    import psycopg2
+finally:
+    # Ensure the name is available in the global scope
+    psycopg2 = sys.modules.get('psycopg2')
 
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
