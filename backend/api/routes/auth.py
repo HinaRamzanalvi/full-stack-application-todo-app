@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select, SQLModel
 from models.user import User, UserCreate, UserRead, UserLogin
-from database.session import get_db_session
+from database.session import get_db as get_db_session
 from middleware.auth import create_access_token
 from models.user import pwd_context
 from typing import Optional
@@ -21,7 +21,9 @@ def get_password_hash(password: str) -> str:
 @router.post("/auth/register", response_model=UserRead)
 def register(user: UserCreate, db: Session = Depends(get_db_session)):
     # Check if user already exists
-    existing_user = db.exec(select(User).where(User.email == user.email)).first()
+    statement = select(User).where(User.email == user.email)
+    result = db.execute(statement)
+    existing_user = result.scalar_one_or_none()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -57,7 +59,8 @@ async def login(user_credentials: UserLogin, db: Session = Depends(get_db_sessio
     try:
         # Find the user by email
         statement = select(User).where(User.email == user_credentials.email)
-        user = db.exec(statement).first()
+        result = db.execute(statement)
+        user = result.scalar_one_or_none()
 
         if not user:
             print(f"Login failed: User with email {user_credentials.email} not found")

@@ -2,11 +2,9 @@
 // This will handle all API calls and automatically attach JWT tokens
 
 class ApiClient {
-  private baseUrl: string;
   private token: string = '';
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
     // Load token from localStorage on initialization
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
@@ -29,7 +27,7 @@ class ApiClient {
   }
 
   async request(endpoint: string, options: RequestInit = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`;
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',

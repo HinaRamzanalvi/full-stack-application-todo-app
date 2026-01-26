@@ -13,7 +13,8 @@ def update_user_passwords():
 
     try:
         # Get all users
-        users = db.exec(select(User)).all()
+        result = db.execute(select(User))
+        users = result.scalars().all()
 
         for user in users:
             print(f"Updating password hash for user: {user.email}")

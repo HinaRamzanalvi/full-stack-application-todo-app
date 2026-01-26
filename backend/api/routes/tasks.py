@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 from sqlmodel import Session, select
 from middleware.auth import current_user, TokenData
-from database.session import get_db_session
+from database.session import get_db as get_db_session
 from models.task import Task, TaskRead, TaskCreate, TaskUpdate
 
 router = APIRouter()
@@ -18,28 +18,13 @@ def get_tasks(
     """
     Get all tasks for the current user with optional filtering and sorting.
     """
+    print("DEBUG: get_tasks function called")
+    # Simple query to test if basic functionality works
     query = select(Task).where(Task.user_id == current_user.user_id)
 
-    # Apply status filter
-    if status and status != "all":
-        if status == "pending":
-            query = query.where(Task.completed == False)
-        elif status == "completed":
-            query = query.where(Task.completed == True)
-
-    # Apply sorting
-    if sort == "title":
-        if order == "asc":
-            query = query.order_by(Task.title)
-        else:
-            query = query.order_by(Task.title.desc())
-    else:  # Default to created date
-        if order == "asc":
-            query = query.order_by(Task.created_at)
-        else:
-            query = query.order_by(Task.created_at.desc())
-
-    tasks = db.exec(query).all()
+    result = db.execute(query)
+    tasks = result.scalars().all()
+    print(f"DEBUG: Retrieved {len(tasks)} tasks")
     return tasks
 
 @router.post("/tasks", response_model=TaskRead)

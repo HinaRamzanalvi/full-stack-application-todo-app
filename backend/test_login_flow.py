@@ -19,7 +19,8 @@ def test_login_flow():
         # Find the user by email (like in auth.py line 59)
         from sqlmodel import select
         statement = select(User).where(User.email == email)
-        user = db.exec(statement).first()
+        result = db.execute(statement)
+        user = result.scalar_one_or_none()
 
         print(f"User found: {user is not None}")
         if user:

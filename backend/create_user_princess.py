@@ -19,7 +19,8 @@ def create_princess_user():
 
     try:
         # Check if user already exists
-        existing_user = db.exec(select(User).where(User.email == email)).first()
+        result = db.execute(select(User).where(User.email == email))
+        existing_user = result.scalar_one_or_none()
         if existing_user:
             print(f"User with email {email} already exists!")
             print(f"User ID: {existing_user.id}")
