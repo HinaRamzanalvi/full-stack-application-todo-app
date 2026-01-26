@@ -6,9 +6,7 @@ class ApiClient {
   private token: string = '';
 
   constructor() {
-    this.baseUrl = process.env.NODE_ENV === 'production'
-      ? ''
-      : process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
     // Load token from localStorage on initialization
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
