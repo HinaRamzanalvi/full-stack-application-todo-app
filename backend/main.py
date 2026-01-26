@@ -50,9 +50,10 @@ def init_db():
         print("Database initialization complete.")
     except Exception as e:
         print(f"An error occurred during database initialization: {e}")
-        # Depending on the error, you might want to exit the application
-        # if the database is essential for startup.
-        raise
+        # Continue without raising the exception to allow the app to start
+        # This allows the app to start even if there are initial DB issues
+        # The individual endpoints will handle DB errors appropriately
+        pass
 
 from api.routes import auth, tasks
 
