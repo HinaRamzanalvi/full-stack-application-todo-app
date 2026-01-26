@@ -2,21 +2,21 @@
 // This will handle all API calls and automatically attach JWT tokens
 
 class ApiClient {
-  private token: string = '';
-
   constructor() {
-    // Load token from localStorage on initialization
+    // Constructor intentionally left empty
+    // Token will be retrieved dynamically from localStorage when needed
+  }
+
+  // Method to get the current token from localStorage
+  private getToken(): string {
     if (typeof window !== 'undefined') {
-      const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        this.token = storedToken;
-      }
+      return localStorage.getItem('token') || '';
     }
+    return '';
   }
 
   setToken(token: string) {
-    this.token = token;
-    // Also store in localStorage for persistence
+    // Store in localStorage for persistence
     if (typeof window !== 'undefined') {
       if (token) {
         localStorage.setItem('token', token);
@@ -28,14 +28,15 @@ class ApiClient {
 
   async request(endpoint: string, options: RequestInit = {}) {
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}${endpoint}`;
+    const currentToken = this.getToken();
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...options.headers,
     };
 
-    if (this.token) {
-      (headers as Record<string, string>)['Authorization'] = `Bearer ${this.token}`;
+    if (currentToken) {
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${currentToken}`;
     }
 
     const config: RequestInit = {
@@ -69,6 +70,7 @@ class ApiClient {
   async getTasks(status?: 'all' | 'pending' | 'completed', sort?: 'created' | 'title', order?: 'asc' | 'desc') {
     let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`;
     const params = new URLSearchParams();
+    const currentToken = this.getToken();
 
     if (status) params.append('status', status);
     if (sort) params.append('sort', sort);
@@ -80,7 +82,7 @@ class ApiClient {
 
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
     });
 
@@ -92,11 +94,12 @@ class ApiClient {
   }
 
   async createTask(title: string, description?: string) {
+    const currentToken = this.getToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
       body: JSON.stringify({ title, description }),
     });
@@ -109,9 +112,10 @@ class ApiClient {
   }
 
   async getTask(id: number) {
+    const currentToken = this.getToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
       headers: {
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
     });
 
@@ -123,11 +127,12 @@ class ApiClient {
   }
 
   async updateTask(id: number, title?: string, description?: string, completed?: boolean) {
+    const currentToken = this.getToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
       body: JSON.stringify({ title, description, completed }),
     });
@@ -140,10 +145,11 @@ class ApiClient {
   }
 
   async deleteTask(id: number) {
+    const currentToken = this.getToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
     });
 
@@ -155,11 +161,12 @@ class ApiClient {
   }
 
   async toggleTaskCompletion(id: number) {
+    const currentToken = this.getToken();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}/complete`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.token}`,
+        'Authorization': `Bearer ${currentToken}`,
       },
     });
 
