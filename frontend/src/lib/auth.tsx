@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       // Make API call to login using apiClient
-      const response = await fetch(`${(apiClient as any).baseUrl}/api/auth/login`, {
+      const response = await fetch(`${(apiClient as any).baseUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (name: string, email: string, password: string) => {
     try {
       // Make API call to register
-      const response = await fetch(`${(apiClient as any).baseUrl}/api/auth/register`, {
+      const response = await fetch(`${(apiClient as any).baseUrl}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +105,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
 
       if (!response.ok) {
-        throw new Error('Signup failed')
+        // Get error details from response
+        let errorMessage = 'Signup failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorMessage;
+        } catch (e) {
+          // If we can't parse the error response, use the status text
+          errorMessage = `Signup failed: ${response.status} ${response.statusText}`;
+        }
+
+        console.error('Signup error:', errorMessage);
+        throw new Error(errorMessage);
       }
 
       const userData: User = await response.json()

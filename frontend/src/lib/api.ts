@@ -6,7 +6,9 @@ class ApiClient {
   private token: string = '';
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+    this.baseUrl = process.env.NODE_ENV === 'production'
+      ? ''
+      : process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
     // Load token from localStorage on initialization
     if (typeof window !== 'undefined') {
       const storedToken = localStorage.getItem('token');
@@ -69,7 +71,7 @@ class ApiClient {
 
   // Task-related API methods
   async getTasks(status?: 'all' | 'pending' | 'completed', sort?: 'created' | 'title', order?: 'asc' | 'desc') {
-    let url = '/api/tasks';
+    let url = '/tasks';
     const params = new URLSearchParams();
 
     if (status) params.append('status', status);
@@ -84,31 +86,31 @@ class ApiClient {
   }
 
   async createTask(title: string, description?: string) {
-    return this.request('/api/tasks', {
+    return this.request('/tasks', {
       method: 'POST',
       body: JSON.stringify({ title, description }),
     });
   }
 
   async getTask(id: number) {
-    return this.request(`/api/tasks/${id}`);
+    return this.request(`/tasks/${id}`);
   }
 
   async updateTask(id: number, title?: string, description?: string, completed?: boolean) {
-    return this.request(`/api/tasks/${id}`, {
+    return this.request(`/tasks/${id}`, {
       method: 'PUT',
       body: JSON.stringify({ title, description, completed }),
     });
   }
 
   async deleteTask(id: number) {
-    return this.request(`/api/tasks/${id}`, {
+    return this.request(`/tasks/${id}`, {
       method: 'DELETE',
     });
   }
 
   async toggleTaskCompletion(id: number) {
-    return this.request(`/api/tasks/${id}/complete`, {
+    return this.request(`/tasks/${id}/complete`, {
       method: 'PATCH',
     });
   }

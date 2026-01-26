@@ -9,6 +9,18 @@
   ],
   "routes": [
     {
+      "src": "/auth/(.*)",
+      "dest": "https://princess345-backendtdooo456.hf.space/auth/$1"
+    },
+    {
+      "src": "/tasks",
+      "dest": "https://princess345-backendtdooo456.hf.space/tasks"
+    },
+    {
+      "src": "/tasks/(.*)",
+      "dest": "https://princess345-backendtdooo456.hf.space/tasks/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
