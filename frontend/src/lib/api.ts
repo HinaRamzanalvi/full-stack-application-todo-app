@@ -67,7 +67,7 @@ class ApiClient {
 
   // Task-related API methods
   async getTasks(status?: 'all' | 'pending' | 'completed', sort?: 'created' | 'title', order?: 'asc' | 'desc') {
-    let url = '/tasks';
+    let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`;
     const params = new URLSearchParams();
 
     if (status) params.append('status', status);
@@ -78,37 +78,96 @@ class ApiClient {
       url += `?${params.toString()}`;
     }
 
-    return this.request(url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get tasks: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async createTask(title: string, description?: string) {
-    return this.request('/tasks', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`,
+      },
       body: JSON.stringify({ title, description }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to create task: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async getTask(id: number) {
-    return this.request(`/tasks/${id}`);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get task: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async updateTask(id: number, title?: string, description?: string, completed?: boolean) {
-    return this.request(`/tasks/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`,
+      },
       body: JSON.stringify({ title, description, completed }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update task: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async deleteTask(id: number) {
-    return this.request(`/tasks/${id}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
       method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+      },
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete task: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 
   async toggleTaskCompletion(id: number) {
-    return this.request(`/tasks/${id}/complete`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}/complete`, {
       method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`,
+      },
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to toggle task completion: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
   }
 }
 

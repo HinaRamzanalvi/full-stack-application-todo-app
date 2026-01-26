@@ -22,6 +22,8 @@ origins = [
     "https://your-vercel-project.vercel.app",  # Replace with your actual Vercel URL
     "http://localhost:3000",                   # For local development
     "http://localhost:3001",                   # Alternative local port
+    "http://127.0.0.1:3000",                   # Alternative local IP
+    "http://127.0.0.1:3001",                   # Alternative local IP
     # Add your actual Vercel URL here after deployment
 ]
 
@@ -29,8 +31,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
     allow_headers=["*"],
+    # Allow credentials to pass through
+    allow_credentials=True,
 )
 
 # --- Database Initialization ---
