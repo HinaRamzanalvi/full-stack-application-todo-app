@@ -19,8 +19,8 @@ export default function ProtectedRoute({ children, isAuthenticated }: ProtectedR
 
   if (!isAuthenticated) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Redirecting to login...</p>
+      <div className="flex justify-center items-center h-screen p-4">
+        <p className="text-center text-gray-600">Redirecting to login...</p>
       </div>
     )
   }

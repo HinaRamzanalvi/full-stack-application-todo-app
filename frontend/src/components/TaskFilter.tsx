@@ -25,13 +25,13 @@ export default function TaskFilter({ onFilterChange }: TaskFilterProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
-      <div className="flex items-center space-x-2">
-        <label className="text-sm font-medium text-gray-700">Status:</label>
-        <div className="flex space-x-2">
+    <div className="flex flex-wrap gap-3 md:gap-4 mb-3 md:mb-4 p-3 md:p-4 bg-gray-50 rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Status:</label>
+        <div className="flex flex-wrap gap-1">
           <button
             onClick={() => handleStatusChange('all')}
-            className={`px-3 py-1 text-sm rounded-md ${
+            className={`px-2.5 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-md ${
               status === 'all'
                 ? 'bg-indigo-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
@@ -41,7 +41,7 @@ export default function TaskFilter({ onFilterChange }: TaskFilterProps) {
           </button>
           <button
             onClick={() => handleStatusChange('pending')}
-            className={`px-3 py-1 text-sm rounded-md ${
+            className={`px-2.5 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-md ${
               status === 'pending'
                 ? 'bg-indigo-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
@@ -51,7 +51,7 @@ export default function TaskFilter({ onFilterChange }: TaskFilterProps) {
           </button>
           <button
             onClick={() => handleStatusChange('completed')}
-            className={`px-3 py-1 text-sm rounded-md ${
+            className={`px-2.5 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-md ${
               status === 'completed'
                 ? 'bg-indigo-600 text-white'
                 : 'bg-white text-gray-700 border border-gray-300'
@@ -62,24 +62,24 @@ export default function TaskFilter({ onFilterChange }: TaskFilterProps) {
         </div>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <label className="text-sm font-medium text-gray-700">Sort by:</label>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Sort by:</label>
         <select
           value={sort}
           onChange={(e) => handleSortChange(e.target.value as 'created' | 'title')}
-          className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+          className="border border-gray-300 rounded-md px-2.5 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm"
         >
           <option value="created">Created Date</option>
           <option value="title">Title</option>
         </select>
       </div>
 
-      <div className="flex items-center space-x-2">
-        <label className="text-sm font-medium text-gray-700">Order:</label>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+        <label className="text-xs sm:text-sm font-medium text-gray-700 whitespace-nowrap">Order:</label>
         <select
           value={order}
           onChange={(e) => handleOrderChange(e.target.value as 'asc' | 'desc')}
-          className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+          className="border border-gray-300 rounded-md px-2.5 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm"
         >
           <option value="desc">Descending</option>
           <option value="asc">Ascending</option>

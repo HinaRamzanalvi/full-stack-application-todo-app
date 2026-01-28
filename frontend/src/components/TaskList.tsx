@@ -92,8 +92,8 @@ export default function TaskList({ tasks, onTaskUpdate }: TaskListProps) {
       <TaskFilter onFilterChange={handleFilterChange} />
       <ul className="divide-y divide-gray-200">
         {filteredTasks.length === 0 ? (
-          <li className="px-4 py-4 sm:px-6">
-            <p className="text-gray-500 text-center">
+          <li className="px-3 py-3 sm:px-4 sm:py-4">
+            <p className="text-gray-500 text-center text-sm">
               {tasks.length === 0
                 ? 'No tasks yet. Create your first task!'
                 : 'No tasks match the current filters.'}

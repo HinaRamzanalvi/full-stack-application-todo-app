@@ -89,10 +89,10 @@ export default function ModernTaskList({ tasks, onTaskUpdate }: TaskListProps) {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 md:mb-4 pb-3 md:pb-4 border-b border-gray-200 gap-2">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Your Tasks</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-800">Your Tasks</h2>
+          <p className="text-xs md:text-sm text-gray-600">
             {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
             {filters.status !== 'all' && ` • ${filters.status}`}
           </p>
@@ -103,23 +103,23 @@ export default function ModernTaskList({ tasks, onTaskUpdate }: TaskListProps) {
 
       <div className="flex-1 overflow-y-auto">
         {filteredTasks.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="mx-auto w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-8 md:py-12">
+            <div className="mx-auto w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-100 flex items-center justify-center mb-3 md:mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 md:h-12 md:w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
+            <h3 className="text-base md:text-lg font-medium text-gray-900 mb-1">
               {tasks.length === 0 ? 'No tasks yet' : 'No tasks match the current filters'}
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">
               {tasks.length === 0
                 ? 'Get started by creating your first task!'
                 : 'Try changing your filters to see more tasks.'}
             </p>
             {tasks.length === 0 && (
-              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <div className="inline-flex items-center px-3 md:px-4 py-1.5 md:py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-sm text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                 </svg>
                 Create your first task
@@ -127,7 +127,7 @@ export default function ModernTaskList({ tasks, onTaskUpdate }: TaskListProps) {
             )}
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {filteredTasks.map((task) => (
               <ModernTaskCard key={task.id} task={task} onTaskUpdate={onTaskUpdate} />
             ))}
