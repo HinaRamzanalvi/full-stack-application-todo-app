@@ -1,4 +1,4 @@
-from . import task
-from . import user
+# This file exists to make the models directory a Python package
+# Actual model imports are handled individually where needed
 
-__all__ = ["task", "user"]
+__all__ = []

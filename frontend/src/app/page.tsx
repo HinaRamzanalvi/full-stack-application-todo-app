@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import FloatingChatBot from '@/components/FloatingChatBot'
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -89,6 +90,9 @@ export default function HomePage() {
           </p>
         </div>
       </div>
+
+      {/* Floating ChatBot Component */}
+      <FloatingChatBot />
     </div>
   )
 }

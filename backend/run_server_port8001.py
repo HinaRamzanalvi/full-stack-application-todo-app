@@ -1,5 +1,6 @@
 import sys
 import os
+
 # Add the src directory to the Python path to resolve imports correctly
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -10,6 +11,8 @@ from database.session import engine
 # Import models to register them with SQLAlchemy's metadata
 from models.user import User
 from models.task import Task
+from src.models.conversation import Conversation  # Add conversation model
+from src.models.message import Message  # Add message model
 from database.config import settings
 from sqlmodel import SQLModel
 
@@ -27,16 +30,8 @@ origins = [
     "https://your-vercel-project.vercel.app",  # Replace with your actual Vercel URL
     "http://localhost:3000",                   # For local development
     "http://localhost:3001",                   # Alternative local port
-    "http://localhost:3002",                   # Alternative local port
-    "http://localhost:3003",                   # Alternative local port
-    "http://localhost:3004",                   # Alternative local port
-    "http://localhost:3005",                   # Alternative local port
     "http://127.0.0.1:3000",                   # Alternative local IP
     "http://127.0.0.1:3001",                   # Alternative local IP
-    "http://127.0.0.1:3002",                   # Alternative local IP
-    "http://127.0.0.1:3003",                   # Alternative local IP
-    "http://127.0.0.1:3004",                   # Alternative local IP
-    "http://127.0.0.1:3005",                   # Alternative local IP
     # Add your actual Vercel URL here after deployment
 ]
 
@@ -83,3 +78,7 @@ def on_startup():
 def read_root():
     """A simple health check endpoint."""
     return {"status": "ok", "message": "API is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8001)  # Changed to port 8001

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     db_max_overflow: int = 30
     better_auth_secret: str = "your-super-secret-jwt-key-here"
     next_public_api_base_url: str = "http://localhost:8000"
+    openai_api_key: str = ""
 
     class Config:
         env_file = ".env"

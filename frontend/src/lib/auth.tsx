@@ -21,6 +21,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  resetSession: () => void;
   isAuthenticated: boolean;
 }
 
@@ -35,17 +36,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkSession()
   }, [])
 
-  const checkSession = () => {
+  const checkSession = async () => {
     // Check for token in localStorage and validate it
     const token = localStorage.getItem('token')
     if (token) {
       // Set the token in the API client
       apiClient.setToken(token)
 
-      // We'll use the user info from localStorage as well
-      const storedUser = localStorage.getItem('user')
-      if (storedUser) {
-        setUser(JSON.parse(storedUser))
+      // Try to validate the token by fetching user info from the backend
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const userData = await response.json()
+          // Store user data for future use
+          localStorage.setItem('user', JSON.stringify(userData))
+          setUser(userData)
+        } else {
+          // Token is invalid, clear it
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          apiClient.setToken('')
+        }
+      } catch (error) {
+        console.error('Error validating session with backend:', error)
+        // Clear potentially invalid token
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        apiClient.setToken('')
       }
     }
     setLoading(false)
@@ -140,12 +162,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  const resetSession = () => {
+    // Clear all auth-related data to reset the session
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+
+    // Clear token from API client
+    apiClient.setToken('')
+
+    // Reset user state
+    setUser(null)
+
+    // Re-check session to ensure proper state
+    setTimeout(() => {
+      checkSession()
+    }, 100)
+  }
+
   const value: AuthContextType = {
     user,
     loading,
     login,
     signup,
     logout,
+    resetSession,
     isAuthenticated: !!user
   }
 
