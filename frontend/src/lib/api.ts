@@ -46,6 +46,20 @@ class ApiClient {
 
     const response = await fetch(url, config);
 
+    // Handle authentication errors specifically
+    if (response.status === 401) {
+      // Clear token and user data from localStorage
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+
+      // Clear token from this instance
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+      }
+
+      throw new Error(`Authentication failed: ${response.status} ${response.statusText}`);
+    }
+
     if (!response.ok) {
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
@@ -172,6 +186,27 @@ class ApiClient {
 
     if (!response.ok) {
       throw new Error(`Failed to toggle task completion: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async chat(message: string, conversationId?: string) {
+    const currentToken = this.getToken();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`,
+      },
+      body: JSON.stringify({
+        message,
+        conversation_id: conversationId || null
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send chat message: ${response.status} ${response.statusText}`);
     }
 
     return response.json();

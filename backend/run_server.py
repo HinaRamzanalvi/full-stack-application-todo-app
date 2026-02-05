@@ -1,5 +1,6 @@
 import sys
 import os
+
 # Add the src directory to the Python path to resolve imports correctly
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
@@ -10,6 +11,8 @@ from database.session import engine
 # Import models to register them with SQLAlchemy's metadata
 from models.user import User
 from models.task import Task
+from src.models.conversation import Conversation  # Add conversation model
+from src.models.message import Message  # Add message model
 from database.config import settings
 from sqlmodel import SQLModel
 
@@ -83,3 +86,7 @@ def on_startup():
 def read_root():
     """A simple health check endpoint."""
     return {"status": "ok", "message": "API is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

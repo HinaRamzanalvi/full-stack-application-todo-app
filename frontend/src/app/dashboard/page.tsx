@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/api'
 import ModernTaskList from '@/components/ModernTaskList'
 import ModernCreateTaskForm from '@/components/ModernCreateTaskForm'
 import ModernHeader from '@/components/ModernHeader'
+import FloatingChatBot from '@/components/FloatingChatBot'
 
 export default function DashboardPage() {
   const [tasks, setTasks] = useState<any[]>([])
@@ -121,8 +122,13 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+
+          {/* Main Content and Sidebar Container */}
         </div>
       </div>
+
+      {/* Floating ChatBot Component */}
+      <FloatingChatBot />
     </div>
   )
 }

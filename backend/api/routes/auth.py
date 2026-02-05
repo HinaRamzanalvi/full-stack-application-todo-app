@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select, SQLModel
 from models.user import User, UserCreate, UserRead, UserLogin
-from database.session import get_db as get_db_session
-from middleware.auth import create_access_token
+from database.session import get_db
+from middleware.auth import create_access_token, TokenData
+from api.deps import get_current_active_user
 from models.user import pwd_context
 from typing import Optional
 
@@ -23,7 +24,7 @@ def get_password_hash(password: str) -> str:
 
 
 @router.post("/auth/register", response_model=UserRead)
-def register(user: UserCreate, db: Session = Depends(get_db_session)):
+def register(user: UserCreate, db: Session = Depends(get_db)):
     # Check if user already exists
     statement = select(User).where(User.email == user.email)
     result = db.execute(statement)
@@ -59,7 +60,7 @@ class LoginResponse(SQLModel):
 
 
 @router.post("/auth/login", response_model=LoginResponse)
-async def login(user_credentials: UserLogin, db: Session = Depends(get_db_session)):
+async def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
     try:
         # Find the user by email
         statement = select(User).where(User.email == user_credentials.email)
@@ -108,3 +109,23 @@ async def login(user_credentials: UserLogin, db: Session = Depends(get_db_sessio
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error"
         )
+
+
+@router.get("/auth/me", response_model=UserRead)
+async def get_current_user_from_token(
+    token_data: TokenData = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user info based on the JWT token"""
+    # Query the user from the database using the user_id from the token
+    statement = select(User).where(User.id == token_data.user_id)
+    result = db.execute(statement)
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    return user
